@@ -16,6 +16,7 @@
     "db:migrate": "bun run scripts/migrate.ts"
   },
   "devDependencies": {
-    "@biomejs/biome": "latest"
+    "@biomejs/biome": "latest",
+    "xlsx": "^0.18.5"
   }
 }
