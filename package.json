@@ -1,0 +1,21 @@
+{
+  "name": "plata-pe",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": ["apps/*", "scripts"],
+  "scripts": {
+    "dev": "bun run --cwd apps/web dev",
+    "build": "bun run --cwd apps/web build",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "probe-claridad": "bun run scripts/probe-claridad.ts",
+    "scrape-legacy": "bun run scripts/scrape-legacy-onpe.ts",
+    "parse-pdfs": "bun run scripts/parse-pdfs.ts",
+    "scrape-claridad": "bun run scripts/scrape-claridad.ts",
+    "entity-resolution": "bun run scripts/entity-resolution.ts",
+    "db:migrate": "bun run scripts/migrate.ts"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "latest"
+  }
+}

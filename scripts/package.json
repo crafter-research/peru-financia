@@ -1,0 +1,12 @@
+{
+  "name": "@plata-pe/scripts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@mendable/firecrawl-js": "latest",
+    "@neondatabase/serverless": "^0.10.4",
+    "@anthropic-ai/sdk": "latest",
+    "zod": "^3.24.0"
+  }
+}
