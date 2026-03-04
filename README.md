@@ -1,4 +1,4 @@
-# plata.pe
+# peru-financia
 
 Mapa open-source de financiamiento político peruano. Sankey diagrams de flujos de dinero hacia partidos, movimientos regionales y candidatos.
 

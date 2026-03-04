@@ -16,14 +16,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "plata.pe — Financiamiento Político Peruano",
+  title: "peru-financia — Financiamiento Político Peruano",
   description:
     "Mapa open-source de flujos de financiamiento político en Perú. Datos de ONPE 1995–2026.",
   openGraph: {
-    title: "plata.pe",
+    title: "peru-financia",
     description: "¿Quién financia la política peruana?",
-    url: "https://plata.pe",
-    siteName: "plata.pe",
+    url: "https://peru-financia",
+    siteName: "peru-financia",
   },
 };
 

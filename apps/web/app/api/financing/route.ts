@@ -108,7 +108,7 @@ export async function GET(request: NextRequest) {
           return new NextResponse(csvRows.join("\n"), {
             headers: {
               "Content-Type": "text/csv",
-              "Content-Disposition": `attachment; filename="plata-pe-${year ?? "all"}.csv"`,
+              "Content-Disposition": `attachment; filename="peru-financia-${year ?? "all"}.csv"`,
             },
           });
         }

@@ -37,7 +37,7 @@ export default async function DonantePage({ params }: Props) {
       <header className="border-b border-[#1f1f1f] px-6 py-4">
         <div className="max-w-5xl mx-auto flex items-center gap-4">
           <Link href="/" className="text-[#888] hover:text-foreground transition-colors text-sm">
-            ← plata.pe
+            ← peru-financia
           </Link>
           <span className="text-[#333]">/</span>
           <span className="text-sm text-[#888]">donante</span>

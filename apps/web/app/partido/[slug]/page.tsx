@@ -42,7 +42,7 @@ export default async function PartidoPage({ params, searchParams }: Props) {
   return (
     <main className="min-h-screen">
       <div className="max-w-5xl mx-auto px-6 py-4 flex items-center gap-2 text-sm text-[#888]">
-        <Link href="/" className="hover:text-foreground transition-colors">← plata.pe</Link>
+        <Link href="/" className="hover:text-foreground transition-colors">← peru-financia</Link>
         <span className="text-[#333]">/</span>
         <span>partido</span>
       </div>
