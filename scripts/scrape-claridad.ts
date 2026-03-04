@@ -95,9 +95,9 @@ Navigate through all pages and filters. Look for year ${year}. Extract maximum d
 async function scrapeWithJsonApi(year: number, apiEndpoint: string): Promise<FinancingRecord[]> {
   console.log(`  Scraping Claridad via JSON API: year=${year}`);
 
-  const result = await firecrawl.scrapeUrl(`${apiEndpoint}?year=${year}&format=json`, {
+  const result = await firecrawl.scrape(`${apiEndpoint}?year=${year}&format=json`, {
     formats: ["json"],
-  } as Parameters<typeof firecrawl.scrapeUrl>[1]);
+  } as Parameters<typeof firecrawl.scrape>[1]);
 
   if (!result.success) {
     console.warn(`  JSON API failed: ${(result as { error?: string }).error}`);

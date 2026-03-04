@@ -53,11 +53,10 @@ const COLLECT_SCRIPT = `
 async function probePage(url: string) {
   console.log(`\nProbing: ${url}`);
 
-  const result = await firecrawl.scrapeUrl(CLARIDAD_BASE + url, {
+  const result = await firecrawl.scrape(CLARIDAD_BASE + url, {
     actions: [
       { type: "executeJavascript", script: INTERCEPT_SCRIPT },
       { type: "wait", milliseconds: 3000 },
-      // Intentar interacción: click en primer select si existe
       { type: "executeJavascript", script: `
         const selects = document.querySelectorAll('select');
         if (selects.length > 0) {
@@ -65,11 +64,10 @@ async function probePage(url: string) {
         }
       `},
       { type: "wait", milliseconds: 2000 },
-      // Recopilar llamadas capturadas
       { type: "executeJavascript", script: COLLECT_SCRIPT },
     ],
-    formats: ["json"],
-  } as Parameters<typeof firecrawl.scrapeUrl>[1]);
+    formats: ["markdown"],
+  } as Parameters<typeof firecrawl.scrape>[1]);
 
   if (!result.success) {
     console.error("  Scrape failed:", (result as { error?: string }).error);

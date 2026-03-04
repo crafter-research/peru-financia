@@ -71,10 +71,9 @@ async function parsePdf(
 ): Promise<ParsedRecord[]> {
   console.log(`  Parsing PDF: ${url}`);
 
-  const result = await firecrawl.scrapeUrl(url, {
-    parsers: [{ type: "pdf", mode: "auto" }],
+  const result = await firecrawl.scrape(url, {
     formats: ["markdown"],
-  } as Parameters<typeof firecrawl.scrapeUrl>[1]);
+  } as Parameters<typeof firecrawl.scrape>[1]);
 
   if (!result.success) {
     console.warn(`  Failed: ${(result as { error?: string }).error}`);
@@ -140,9 +139,9 @@ function extractRecordsFromMarkdown(
 async function discoverPdfsFromCollection(): Promise<string[]> {
   console.log("Discovering PDFs from gob.pe collection...");
 
-  const result = await firecrawl.scrapeUrl(GOB_PE_COLLECTION, {
+  const result = await firecrawl.scrape(GOB_PE_COLLECTION, {
     formats: ["links"],
-  } as Parameters<typeof firecrawl.scrapeUrl>[1]);
+  } as Parameters<typeof firecrawl.scrape>[1]);
 
   if (!result.success) return [];
 

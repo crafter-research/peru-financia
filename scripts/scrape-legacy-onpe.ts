@@ -65,7 +65,7 @@ type ScrapedRecord = {
 async function scrapeVerificacion(year: number, partyType: string): Promise<ScrapedRecord[]> {
   console.log(`  Scraping verificacion: year=${year}, type=${partyType}`);
 
-  const result = await firecrawl.scrapeUrl(LEGACY_VERIFICACION_BASE, {
+  const result = await firecrawl.scrape(LEGACY_VERIFICACION_BASE, {
     actions: [
       { type: "wait", milliseconds: 2000 },
       // Seleccionar año
@@ -94,7 +94,7 @@ async function scrapeVerificacion(year: number, partyType: string): Promise<Scra
       { type: "wait", milliseconds: 2000 },
     ],
     formats: ["markdown", "json"],
-  } as Parameters<typeof firecrawl.scrapeUrl>[1]);
+  } as Parameters<typeof firecrawl.scrape>[1]);
 
   if (!result.success) {
     console.warn(`    Failed: ${(result as { error?: string }).error}`);
