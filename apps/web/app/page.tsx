@@ -1,19 +1,19 @@
 import { Suspense } from "react";
-import { getAvailableYears, getPartyTotals } from "@/lib/db";
+import { getAllElectoralProcesses, getPartyTotals } from "@/lib/db";
 import HomeClient from "./home-client";
 
 export const revalidate = 3600;
 
 export default async function HomePage() {
-  let years: number[] = [];
-  let defaultYear = 2020;
+  let processes: string[] = [];
+  let defaultProcess = "";
   let topParties: { party_name: string; total: number; party_type: string | null }[] = [];
 
   try {
-    years = await getAvailableYears();
-    if (years.length > 0) {
-      defaultYear = years[0];
-      topParties = await getPartyTotals(defaultYear);
+    processes = await getAllElectoralProcesses();
+    if (processes.length > 0) {
+      defaultProcess = processes[0];
+      topParties = await getPartyTotals(undefined, defaultProcess);
     }
   } catch {
     // DB not connected yet — show empty state
@@ -21,42 +21,18 @@ export default async function HomePage() {
 
   return (
     <main className="min-h-screen">
-      <header className="border-b border-[#1f1f1f] px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div>
-            <h1 className="text-lg font-semibold tracking-tight">
-              plata<span className="text-[#c084fc]">.pe</span>
-            </h1>
-            <p className="text-xs text-[#888] mt-0.5">financiamiento político peruano</p>
-          </div>
-          <div className="flex items-center gap-4 text-xs text-[#888]">
-            <a
-              href="https://github.com/crafter-station/plata-pe"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-foreground transition-colors"
-            >
-              GitHub
-            </a>
-            <span className="text-[#333]">|</span>
-            <a
-              href="https://www.onpe.gob.pe"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-foreground transition-colors"
-            >
-              Datos: ONPE
-            </a>
-          </div>
-        </div>
-      </header>
+      <div className="max-w-7xl mx-auto px-6 pt-4 flex items-center gap-4 text-xs text-[#888]">
+        <a href="https://github.com/crafter-station/plata-pe" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">GitHub</a>
+        <span className="text-[#333]">|</span>
+        <a href="https://www.onpe.gob.pe" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">Datos: ONPE</a>
+      </div>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {years.length === 0 ? (
+        {processes.length === 0 ? (
           <EmptyState />
         ) : (
           <Suspense fallback={<div className="text-[#888] font-mono text-sm">cargando...</div>}>
-            <HomeClient years={years} defaultYear={defaultYear} topParties={topParties} />
+            <HomeClient processes={processes} defaultProcess={defaultProcess} topParties={topParties} />
           </Suspense>
         )}
       </div>
