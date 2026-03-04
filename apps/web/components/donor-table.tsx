@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { FinancingRecord } from "@/lib/db";
 
@@ -15,17 +16,13 @@ const FINANCING_TYPE_LABELS: Record<string, string> = {
   publico_indirecto: "Público indirecto",
 };
 
-const DONOR_TYPE_LABELS: Record<string, string> = {
-  persona_natural: "Persona natural",
-  persona_juridica: "Persona jurídica",
-};
-
 type Props = {
-  year: number;
+  year?: number;
   partyFilter?: string;
+  electoralProcess?: string;
 };
 
-export default function DonorTable({ year, partyFilter }: Props) {
+export default function DonorTable({ year, partyFilter, electoralProcess }: Props) {
   const [records, setRecords] = useState<FinancingRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
@@ -33,15 +30,17 @@ export default function DonorTable({ year, partyFilter }: Props) {
 
   useEffect(() => {
     setLoading(true);
-    const params = new URLSearchParams({ action: "records", year: String(year) });
+    const params = new URLSearchParams({ action: "records" });
+    if (electoralProcess) params.set("process", electoralProcess);
+    else if (year) params.set("year", String(year));
     if (partyFilter) params.set("party", partyFilter);
     if (financingTypeFilter) params.set("type", financingTypeFilter);
 
     fetch(`/api/financing?${params}`)
       .then((r) => r.json())
-      .then(setRecords)
+      .then((data) => setRecords(Array.isArray(data) ? data : []))
       .finally(() => setLoading(false));
-  }, [year, partyFilter, financingTypeFilter]);
+  }, [year, partyFilter, financingTypeFilter, electoralProcess]);
 
   const filtered = useMemo(() => {
     if (!search.trim()) return records;
@@ -54,6 +53,15 @@ export default function DonorTable({ year, partyFilter }: Props) {
     );
   }, [records, search]);
 
+  function downloadCsv() {
+    const params = new URLSearchParams({ format: "csv" });
+    if (electoralProcess) params.set("process", electoralProcess);
+    else if (year) params.set("year", String(year));
+    if (partyFilter) params.set("party", partyFilter);
+    if (financingTypeFilter) params.set("type", financingTypeFilter);
+    window.open(`/api/financing?${params}`, "_blank");
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex gap-3 flex-wrap">
@@ -62,24 +70,29 @@ export default function DonorTable({ year, partyFilter }: Props) {
           placeholder="Buscar por donante, partido o RUC/DNI..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 min-w-48 px-3 py-2 bg-[#111] border border-[#1f1f1f] rounded-md text-sm text-foreground placeholder:text-[#888] focus:outline-none focus:border-[#444]"
+          className="flex-1 min-w-48 px-3 py-2 bg-[#111] border border-[#1f1f1f] rounded-md text-sm placeholder:text-[#444] focus:outline-none focus:border-[#444]"
         />
         <select
           value={financingTypeFilter}
           onChange={(e) => setFinancingTypeFilter(e.target.value)}
-          className="px-3 py-2 bg-[#111] border border-[#1f1f1f] rounded-md text-sm text-foreground focus:outline-none focus:border-[#444]"
+          className="px-3 py-2 bg-[#111] border border-[#1f1f1f] rounded-md text-sm focus:outline-none focus:border-[#444]"
         >
           <option value="">Todos los tipos</option>
           <option value="privado">Privado</option>
           <option value="publico_directo">Público directo</option>
           <option value="publico_indirecto">Público indirecto</option>
         </select>
+        <button
+          type="button"
+          onClick={downloadCsv}
+          className="px-3 py-2 bg-[#111] border border-[#1f1f1f] rounded-md text-sm text-[#888] hover:text-foreground hover:border-[#333] transition-colors font-mono"
+        >
+          CSV ↓
+        </button>
       </div>
 
       {loading ? (
-        <div className="text-muted font-mono text-sm py-8 text-center animate-pulse">
-          cargando...
-        </div>
+        <div className="text-[#888] font-mono text-sm py-8 text-center animate-pulse">cargando...</div>
       ) : (
         <div className="overflow-x-auto rounded-lg border border-[#1f1f1f]">
           <table className="w-full text-sm">
@@ -96,9 +109,7 @@ export default function DonorTable({ year, partyFilter }: Props) {
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="text-center py-8 text-[#888] font-mono text-xs">
-                    sin registros
-                  </td>
+                  <td colSpan={6} className="text-center py-8 text-[#888] font-mono text-xs">sin registros</td>
                 </tr>
               ) : (
                 filtered.map((r) => (
@@ -106,20 +117,34 @@ export default function DonorTable({ year, partyFilter }: Props) {
                     <td className="px-4 py-3 max-w-48 truncate">
                       {r.donor_name ?? <span className="text-[#444]">—</span>}
                     </td>
-                    <td className="px-4 py-3 font-mono text-xs text-[#888]">
-                      {r.donor_dni_ruc ?? "—"}
+                    <td className="px-4 py-3 font-mono text-xs">
+                      {r.donor_dni_ruc ? (
+                        <Link
+                          href={`/donante/${encodeURIComponent(r.donor_dni_ruc)}`}
+                          className="text-[#60a5fa] hover:underline"
+                        >
+                          {r.donor_dni_ruc}
+                        </Link>
+                      ) : (
+                        <span className="text-[#444]">—</span>
+                      )}
                     </td>
-                    <td className="px-4 py-3 max-w-40 truncate">{r.party_name}</td>
+                    <td className="px-4 py-3 max-w-40 truncate">
+                      <Link
+                        href={`/partido/${r.party_name.toLowerCase().replace(/\s+/g, "-")}`}
+                        className="hover:text-[#c084fc] transition-colors"
+                      >
+                        {r.party_name}
+                      </Link>
+                    </td>
                     <td className="px-4 py-3">
                       {r.financing_type ? (
                         <span
                           className="px-2 py-0.5 rounded text-xs border"
                           style={{
-                            borderColor:
-                              r.financing_type === "privado" ? "#c084fc33" : "#60a5fa33",
+                            borderColor: r.financing_type === "privado" ? "#c084fc33" : "#60a5fa33",
                             color: r.financing_type === "privado" ? "#c084fc" : "#60a5fa",
-                            background:
-                              r.financing_type === "privado" ? "#c084fc11" : "#60a5fa11",
+                            background: r.financing_type === "privado" ? "#c084fc11" : "#60a5fa11",
                           }}
                         >
                           {FINANCING_TYPE_LABELS[r.financing_type] ?? r.financing_type}
@@ -135,15 +160,13 @@ export default function DonorTable({ year, partyFilter }: Props) {
                             ? "text-[#c084fc]"
                             : r.amount_soles >= 10_000
                               ? "text-[#60a5fa]"
-                              : "text-foreground"
+                              : ""
                         }
                       >
                         {formatSoles(r.amount_soles)}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-[#888] text-xs font-mono">
-                      {r.date ?? "—"}
-                    </td>
+                    <td className="px-4 py-3 text-[#888] text-xs font-mono">{r.date ?? "—"}</td>
                   </tr>
                 ))
               )}

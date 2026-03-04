@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getAvailableYears, getFinancingRecords } from "@/lib/db";
 import DonorTable from "@/components/donor-table";
+import PartidoClient from "./partido-client";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -40,23 +41,19 @@ export default async function PartidoPage({ params, searchParams }: Props) {
 
   return (
     <main className="min-h-screen">
-      <header className="border-b border-[#1f1f1f] px-6 py-4">
-        <div className="max-w-5xl mx-auto flex items-center gap-4">
-          <Link href="/" className="text-[#888] hover:text-foreground transition-colors text-sm">
-            ← plata.pe
-          </Link>
-          <span className="text-[#333]">/</span>
-          <span className="text-sm text-[#888]">partido</span>
-        </div>
-      </header>
+      <div className="max-w-5xl mx-auto px-6 py-4 flex items-center gap-2 text-sm text-[#888]">
+        <Link href="/" className="hover:text-foreground transition-colors">← plata.pe</Link>
+        <span className="text-[#333]">/</span>
+        <span>partido</span>
+      </div>
 
-      <div className="max-w-5xl mx-auto px-6 py-8 space-y-8">
+      <div className="max-w-5xl mx-auto px-6 py-4 space-y-8">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">{displayName}</h1>
-          <p className="text-[#888] text-sm mt-1">
-            Registro de financiamiento — ONPE
-          </p>
+          <p className="text-[#888] text-sm mt-1">Registro de financiamiento — ONPE</p>
         </div>
+
+        <PartidoClient partyName={displayName} />
 
         {years.length > 0 && (
           <div className="flex items-center gap-2">
