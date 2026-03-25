@@ -56,10 +56,15 @@ export default async function DonantePage({ params }: Props) {
                   Financiador múltiple
                 </span>
               )}
+              {profile.donor_type === "autofinanciamiento" && (
+                <span className="px-2 py-0.5 rounded text-xs border border-[#60a5fa] text-[#60a5fa] bg-[#60a5fa11]">
+                  Autofinanciamiento
+                </span>
+              )}
             </div>
             {profile.donor_type && (
               <p className="text-[#888] text-xs mt-1">
-                {profile.donor_type === "persona_natural" ? "Persona natural" : "Persona jurídica"}
+                {profile.donor_type === "persona_natural" ? "Persona natural" : profile.donor_type === "autofinanciamiento" ? "Fondos propios del partido" : profile.donor_type === "desconocido" ? "Donante no identificado" : "Persona jurídica"}
               </p>
             )}
           </div>
