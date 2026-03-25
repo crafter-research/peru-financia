@@ -11,7 +11,7 @@ export type FinancingRecord = {
   party_type: string | null;
   financing_type: string | null;
   donor_name: string | null;
-  donor_dni_ruc: string | null;
+  donor_slug: string | null;
   donor_type: string | null;
   amount_soles: number;
   donation_type: string | null;
@@ -36,7 +36,7 @@ export type SankeyData = {
 
 export type DonorProfile = {
   donor_name: string | null;
-  donor_dni_ruc: string;
+  donor_slug: string;
   donor_type: string | null;
   total: number;
   parties_count: number;
@@ -81,7 +81,7 @@ export async function getFinancingRecords(
 ): Promise<FinancingRecord[]> {
   const SELECT = sql`
     SELECT id, source, year, electoral_process, party_name, party_type,
-           financing_type, donor_name, donor_dni_ruc, donor_type,
+           financing_type, donor_name, donor_slug, donor_type,
            amount_soles::float, donation_type, date::text, candidate_name
     FROM financing_records
   `;
@@ -137,7 +137,6 @@ export async function getSankeyData(year?: number, electoralProcess?: string): P
         GROUP BY donor_type, financing_type, party_name ORDER BY total DESC LIMIT 200
       `;
 
-  // Determine top parties by total across all rows
   const partyTotals = new Map<string, number>();
   for (const row of rows) {
     const p = row.party_name as string;
@@ -150,7 +149,6 @@ export async function getSankeyData(year?: number, electoralProcess?: string): P
       .map(([name]) => name)
   );
 
-  // Remap party names: non-top become "Otros"
   const normalized = rows.map((row) => ({
     donor_type: row.donor_type as string,
     financing_type: row.financing_type as string | null,
@@ -158,7 +156,6 @@ export async function getSankeyData(year?: number, electoralProcess?: string): P
     total: Number(row.total),
   }));
 
-  // Aggregate after remapping (Otros may have many rows now)
   type AggKey = string;
   const aggMap = new Map<AggKey, { donor_type: string; financing_type: string | null; party_name: string; total: number }>();
   for (const r of normalized) {
@@ -172,7 +169,6 @@ export async function getSankeyData(year?: number, electoralProcess?: string): P
   }
   const agg = [...aggMap.values()];
 
-  // If all financing_types are the same value, skip the middle node (adds no information)
   const uniqueFinancingTypes = new Set(agg.map((r) => r.financing_type).filter(Boolean));
   const skipMiddle = uniqueFinancingTypes.size <= 1;
 
@@ -186,7 +182,6 @@ export async function getSankeyData(year?: number, electoralProcess?: string): P
   const nodes: SankeyNode[] = Array.from(nodeSet).map((name) => ({ name }));
   const nodeIndex = new Map(nodes.map((n, i) => [n.name, i]));
 
-  // Aggregate direct links when skipping middle
   const directMap = new Map<string, number>();
   const links: SankeyLink[] = [];
 
@@ -246,7 +241,7 @@ export async function getElectoralProcesses(year: number): Promise<string[]> {
 
 export type DonorRow = {
   donor_name: string | null;
-  donor_dni_ruc: string;
+  donor_slug: string;
   donor_type: string | null;
   total: number;
   parties_count: number;
@@ -265,39 +260,39 @@ export async function getDonors(opts: {
   const [rows, countRows] = await Promise.all([
     q
       ? sql`
-          SELECT donor_name, donor_dni_ruc, donor_type,
+          SELECT donor_name, donor_slug, donor_type,
                  SUM(amount_soles)::float as total,
                  COUNT(DISTINCT party_name)::int as parties_count,
                  COUNT(*)::int as donations_count
           FROM financing_records
-          WHERE donor_dni_ruc IS NOT NULL AND donor_dni_ruc != ''
-            AND (donor_name ILIKE ${q} OR donor_dni_ruc ILIKE ${q})
-          GROUP BY donor_name, donor_dni_ruc, donor_type
+          WHERE donor_slug IS NOT NULL AND donor_slug != ''
+            AND donor_name ILIKE ${q}
+          GROUP BY donor_name, donor_slug, donor_type
           ORDER BY total DESC
           LIMIT ${pageSize} OFFSET ${offset}
         `
       : sql`
-          SELECT donor_name, donor_dni_ruc, donor_type,
+          SELECT donor_name, donor_slug, donor_type,
                  SUM(amount_soles)::float as total,
                  COUNT(DISTINCT party_name)::int as parties_count,
                  COUNT(*)::int as donations_count
           FROM financing_records
-          WHERE donor_dni_ruc IS NOT NULL AND donor_dni_ruc != ''
-          GROUP BY donor_name, donor_dni_ruc, donor_type
+          WHERE donor_slug IS NOT NULL AND donor_slug != ''
+          GROUP BY donor_name, donor_slug, donor_type
           ORDER BY total DESC
           LIMIT ${pageSize} OFFSET ${offset}
         `,
     q
       ? sql`
-          SELECT COUNT(DISTINCT donor_dni_ruc)::int as total
+          SELECT COUNT(DISTINCT donor_slug)::int as total
           FROM financing_records
-          WHERE donor_dni_ruc IS NOT NULL AND donor_dni_ruc != ''
-            AND (donor_name ILIKE ${q} OR donor_dni_ruc ILIKE ${q})
+          WHERE donor_slug IS NOT NULL AND donor_slug != ''
+            AND donor_name ILIKE ${q}
         `
       : sql`
-          SELECT COUNT(DISTINCT donor_dni_ruc)::int as total
+          SELECT COUNT(DISTINCT donor_slug)::int as total
           FROM financing_records
-          WHERE donor_dni_ruc IS NOT NULL AND donor_dni_ruc != ''
+          WHERE donor_slug IS NOT NULL AND donor_slug != ''
         `,
   ]);
 
@@ -371,26 +366,26 @@ export async function getPartyTrend(partyName: string): Promise<PartyTrend[]> {
   ` as unknown as Promise<PartyTrend[]>;
 }
 
-export async function getDonorProfile(ruc: string): Promise<DonorProfile | null> {
+export async function getDonorProfile(slug: string): Promise<DonorProfile | null> {
   const rows = await sql`
-    SELECT donor_name, donor_dni_ruc, donor_type,
+    SELECT donor_name, donor_slug, donor_type,
            SUM(amount_soles)::float as total,
            COUNT(DISTINCT party_name)::int as parties_count,
            COUNT(*)::int as donations_count,
            MIN(year)::int as first_year, MAX(year)::int as last_year
-    FROM financing_records WHERE donor_dni_ruc = ${ruc}
-    GROUP BY donor_name, donor_dni_ruc, donor_type
+    FROM financing_records WHERE donor_slug = ${slug}
+    GROUP BY donor_name, donor_slug, donor_type
     ORDER BY total DESC LIMIT 1
   `;
   if (rows.length === 0) return null;
   return rows[0] as unknown as DonorProfile;
 }
 
-export async function getDonorDonations(ruc: string): Promise<DonorDonation[]> {
+export async function getDonorDonations(slug: string): Promise<DonorDonation[]> {
   return sql`
     SELECT party_name, year, electoral_process,
            SUM(amount_soles)::float as total, COUNT(*)::int as count
-    FROM financing_records WHERE donor_dni_ruc = ${ruc}
+    FROM financing_records WHERE donor_slug = ${slug}
     GROUP BY party_name, year, electoral_process ORDER BY total DESC
   ` as unknown as Promise<DonorDonation[]>;
 }
@@ -401,7 +396,7 @@ export type DonorStats = {
   persona_juridica: number;
   multi_party_donors: number;
   total_amount: number;
-  top_donors: { donor_name: string | null; donor_dni_ruc: string; total: number; parties_count: number }[];
+  top_donors: { donor_name: string | null; donor_slug: string; total: number; parties_count: number }[];
   amount_buckets: { bucket: string; count: number }[];
 };
 
@@ -409,32 +404,32 @@ export async function getDonorStats(): Promise<DonorStats> {
   const [summaryRows, topRows, bucketRows] = await Promise.all([
     sql`
       SELECT
-        COUNT(DISTINCT donor_dni_ruc)::int as total_donors,
-        COUNT(DISTINCT CASE WHEN donor_type = 'persona_natural' THEN donor_dni_ruc END)::int as persona_natural,
-        COUNT(DISTINCT CASE WHEN donor_type != 'persona_natural' AND donor_type IS NOT NULL THEN donor_dni_ruc END)::int as persona_juridica,
-        COUNT(DISTINCT CASE WHEN parties_count >= 2 THEN donor_dni_ruc END)::int as multi_party_donors,
+        COUNT(DISTINCT donor_slug)::int as total_donors,
+        COUNT(DISTINCT CASE WHEN donor_type = 'persona_natural' THEN donor_slug END)::int as persona_natural,
+        COUNT(DISTINCT CASE WHEN donor_type != 'persona_natural' AND donor_type IS NOT NULL THEN donor_slug END)::int as persona_juridica,
+        COUNT(DISTINCT CASE WHEN parties_count >= 2 THEN donor_slug END)::int as multi_party_donors,
         SUM(total_amount)::float as total_amount
       FROM (
-        SELECT donor_dni_ruc, donor_type,
+        SELECT donor_slug, donor_type,
                COUNT(DISTINCT party_name) as parties_count,
                SUM(amount_soles) as total_amount
         FROM financing_records
-        WHERE donor_dni_ruc IS NOT NULL AND donor_dni_ruc != ''
-        GROUP BY donor_dni_ruc, donor_type
+        WHERE donor_slug IS NOT NULL AND donor_slug != ''
+        GROUP BY donor_slug, donor_type
       ) sub
     `,
     sql`
-      SELECT donor_name, donor_dni_ruc,
+      SELECT donor_name, donor_slug,
              SUM(amount_soles)::float as total,
              COUNT(DISTINCT party_name)::int as parties_count
       FROM financing_records
-      WHERE donor_dni_ruc IS NOT NULL AND donor_dni_ruc != ''
-      GROUP BY donor_name, donor_dni_ruc
+      WHERE donor_slug IS NOT NULL AND donor_slug != ''
+      GROUP BY donor_name, donor_slug
       ORDER BY total DESC LIMIT 10
     `,
     sql`
       SELECT bucket, COUNT(*)::int as count FROM (
-        SELECT donor_dni_ruc,
+        SELECT donor_slug,
           CASE
             WHEN SUM(amount_soles) >= 1000000 THEN '≥ S/1M'
             WHEN SUM(amount_soles) >= 100000  THEN 'S/100K–1M'
@@ -443,8 +438,8 @@ export async function getDonorStats(): Promise<DonorStats> {
             ELSE '< S/1K'
           END as bucket
         FROM financing_records
-        WHERE donor_dni_ruc IS NOT NULL AND donor_dni_ruc != ''
-        GROUP BY donor_dni_ruc
+        WHERE donor_slug IS NOT NULL AND donor_slug != ''
+        GROUP BY donor_slug
       ) sub
       GROUP BY bucket
       ORDER BY MIN(CASE bucket
@@ -472,11 +467,11 @@ export async function getDonorStats(): Promise<DonorStats> {
 export async function searchAll(query: string): Promise<SearchResult[]> {
   const q = "%" + query + "%";
   const rows = await sql`
-    (SELECT 'donante' as type, COALESCE(donor_name, donor_dni_ruc) as name, donor_dni_ruc as key,
+    (SELECT 'donante' as type, COALESCE(donor_name, donor_slug) as name, donor_slug as key,
             SUM(amount_soles)::float as total
      FROM financing_records
-     WHERE (donor_name ILIKE ${q} OR donor_dni_ruc ILIKE ${q}) AND donor_dni_ruc IS NOT NULL
-     GROUP BY donor_name, donor_dni_ruc LIMIT 5)
+     WHERE donor_name ILIKE ${q} AND donor_slug IS NOT NULL
+     GROUP BY donor_name, donor_slug LIMIT 5)
     UNION ALL
     (SELECT 'partido' as type, party_name as name, party_name as key,
             SUM(amount_soles)::float as total

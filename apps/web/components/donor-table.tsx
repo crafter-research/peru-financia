@@ -48,8 +48,7 @@ export default function DonorTable({ year, partyFilter, electoralProcess }: Prop
     return records.filter(
       (r) =>
         r.donor_name?.toLowerCase().includes(q) ||
-        r.party_name.toLowerCase().includes(q) ||
-        r.donor_dni_ruc?.toLowerCase().includes(q)
+        r.party_name.toLowerCase().includes(q)
     );
   }, [records, search]);
 
@@ -67,7 +66,7 @@ export default function DonorTable({ year, partyFilter, electoralProcess }: Prop
       <div className="flex gap-3 flex-wrap">
         <input
           type="text"
-          placeholder="Buscar por donante, partido o RUC/DNI..."
+          placeholder="Buscar por donante o partido..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="flex-1 min-w-48 px-3 py-2 bg-[#111] border border-[#1f1f1f] rounded-md text-sm placeholder:text-[#444] focus:outline-none focus:border-[#444]"
@@ -99,7 +98,6 @@ export default function DonorTable({ year, partyFilter, electoralProcess }: Prop
             <thead>
               <tr className="border-b border-[#1f1f1f] bg-[#111]">
                 <th className="text-left px-4 py-3 text-[#888] font-normal">Donante</th>
-                <th className="text-left px-4 py-3 text-[#888] font-normal">DNI/RUC</th>
                 <th className="text-left px-4 py-3 text-[#888] font-normal">Partido</th>
                 <th className="text-left px-4 py-3 text-[#888] font-normal">Tipo</th>
                 <th className="text-right px-4 py-3 text-[#888] font-normal">Monto</th>
@@ -115,18 +113,15 @@ export default function DonorTable({ year, partyFilter, electoralProcess }: Prop
                 filtered.map((r) => (
                   <tr key={r.id} className="border-b border-[#111] hover:bg-[#111] transition-colors">
                     <td className="px-4 py-3 max-w-48 truncate">
-                      {r.donor_name ?? <span className="text-[#444]">—</span>}
-                    </td>
-                    <td className="px-4 py-3 font-mono text-xs">
-                      {r.donor_dni_ruc ? (
+                      {r.donor_slug ? (
                         <Link
-                          href={`/donante/${encodeURIComponent(r.donor_dni_ruc)}`}
-                          className="text-[#60a5fa] hover:underline"
+                          href={`/donante/${encodeURIComponent(r.donor_slug)}`}
+                          className="hover:text-[#c084fc] transition-colors"
                         >
-                          {r.donor_dni_ruc}
+                          {r.donor_name ?? <span className="text-[#444]">—</span>}
                         </Link>
                       ) : (
-                        <span className="text-[#444]">—</span>
+                        r.donor_name ?? <span className="text-[#444]">—</span>
                       )}
                     </td>
                     <td className="px-4 py-3 max-w-40 truncate">

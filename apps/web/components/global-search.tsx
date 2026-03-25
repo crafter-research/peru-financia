@@ -60,7 +60,7 @@ export default function GlobalSearch() {
       <div className="relative">
         <input
           type="text"
-          placeholder="Buscar donante, partido, RUC..."
+          placeholder="Buscar donante o partido..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => results.length > 0 && setOpen(true)}
@@ -84,7 +84,6 @@ export default function GlobalSearch() {
             >
               <div className="min-w-0">
                 <p className="text-sm truncate">{r.name}</p>
-                <p className="text-xs text-[#444] font-mono">{r.key}</p>
               </div>
               <div className="flex items-center gap-2 shrink-0 ml-3">
                 <span className="text-xs font-mono text-[#888]">{formatSoles(r.total)}</span>

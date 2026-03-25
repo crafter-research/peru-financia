@@ -3,7 +3,7 @@ import Link from "next/link";
 import { getDonorDonations, getDonorProfile } from "@/lib/db";
 
 type Props = {
-  params: Promise<{ ruc: string }>;
+  params: Promise<{ slug: string }>;
 };
 
 function formatSoles(amount: number): string {
@@ -13,16 +13,16 @@ function formatSoles(amount: number): string {
 }
 
 export default async function DonantePage({ params }: Props) {
-  const { ruc } = await params;
-  const decodedRuc = decodeURIComponent(ruc);
+  const { slug } = await params;
+  const decodedSlug = decodeURIComponent(slug);
 
   let profile = null;
   let donations: Awaited<ReturnType<typeof getDonorDonations>> = [];
 
   try {
     [profile, donations] = await Promise.all([
-      getDonorProfile(decodedRuc),
-      getDonorDonations(decodedRuc),
+      getDonorProfile(decodedSlug),
+      getDonorDonations(decodedSlug),
     ]);
   } catch {
     // DB not connected
@@ -40,7 +40,7 @@ export default async function DonantePage({ params }: Props) {
             ← peru-financia
           </Link>
           <span className="text-[#333]">/</span>
-          <span className="text-sm text-[#888]">donante</span>
+          <Link href="/donante" className="text-sm text-[#888] hover:text-foreground transition-colors">donante</Link>
         </div>
       </header>
 
@@ -49,7 +49,7 @@ export default async function DonantePage({ params }: Props) {
           <div>
             <div className="flex items-center gap-3 flex-wrap">
               <h1 className="text-2xl font-semibold tracking-tight">
-                {profile.donor_name ?? decodedRuc}
+                {profile.donor_name ?? "Donante"}
               </h1>
               {isMultiple && (
                 <span className="px-2 py-0.5 rounded text-xs border border-[#f87171] text-[#f87171] bg-[#f8717111]">
@@ -57,9 +57,8 @@ export default async function DonantePage({ params }: Props) {
                 </span>
               )}
             </div>
-            <p className="text-[#888] text-sm mt-1 font-mono">{decodedRuc}</p>
             {profile.donor_type && (
-              <p className="text-[#888] text-xs mt-0.5">
+              <p className="text-[#888] text-xs mt-1">
                 {profile.donor_type === "persona_natural" ? "Persona natural" : "Persona jurídica"}
               </p>
             )}

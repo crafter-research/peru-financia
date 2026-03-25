@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
   const partyName = searchParams.get("party") ?? undefined;
   const financingType = searchParams.get("type") ?? undefined;
   const electoralProcess = searchParams.get("process") ?? undefined;
-  const ruc = searchParams.get("ruc") ?? undefined;
+  const slug = searchParams.get("slug") ?? undefined;
   const q = searchParams.get("q") ?? undefined;
   const format = searchParams.get("format") ?? "json";
 
@@ -79,8 +79,8 @@ export async function GET(request: NextRequest) {
       }
 
       case "donor": {
-        if (!ruc) return NextResponse.json({ error: "ruc required" }, { status: 400 });
-        const [profile, donations] = await Promise.all([getDonorProfile(ruc), getDonorDonations(ruc)]);
+        if (!slug) return NextResponse.json({ error: "slug required" }, { status: 400 });
+        const [profile, donations] = await Promise.all([getDonorProfile(slug), getDonorDonations(slug)]);
         if (!profile) return NextResponse.json({ error: "donor not found" }, { status: 404 });
         return NextResponse.json({ profile, donations });
       }
@@ -95,7 +95,7 @@ export async function GET(request: NextRequest) {
         const records = await getFinancingRecords(year, partyName, financingType, electoralProcess);
 
         if (format === "csv") {
-          const headers = ["id", "year", "electoral_process", "party_name", "party_type", "financing_type", "donor_name", "donor_dni_ruc", "donor_type", "amount_soles", "date"];
+          const headers = ["id", "year", "electoral_process", "party_name", "party_type", "financing_type", "donor_name", "donor_type", "amount_soles", "date"];
           const csvRows = [
             headers.join(","),
             ...records.map((r) =>

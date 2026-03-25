@@ -11,7 +11,7 @@ function formatSoles(amount: number): string {
 
 type DonorRow = {
   donor_name: string | null;
-  donor_dni_ruc: string;
+  donor_slug: string;
   donor_type: string | null;
   total: number;
   parties_count: number;
@@ -24,7 +24,7 @@ type DonorStats = {
   persona_juridica: number;
   multi_party_donors: number;
   total_amount: number;
-  top_donors: { donor_name: string | null; donor_dni_ruc: string; total: number; parties_count: number }[];
+  top_donors: { donor_name: string | null; donor_slug: string; total: number; parties_count: number }[];
   amount_buckets: { bucket: string; count: number }[];
 };
 
@@ -120,11 +120,11 @@ export default function DonantesPage() {
               <div className="space-y-2.5">
                 {stats.top_donors.map((d, i) => {
                   const pct = (d.total / maxTopDonor) * 100;
-                  const name = d.donor_name ?? d.donor_dni_ruc;
+                  const name = d.donor_name ?? "Donante";
                   return (
                     <Link
-                      key={d.donor_dni_ruc}
-                      href={`/donante/${encodeURIComponent(d.donor_dni_ruc)}`}
+                      key={d.donor_slug}
+                      href={`/donante/${encodeURIComponent(d.donor_slug)}`}
                       className="block group"
                     >
                       <div className="flex items-center gap-2 mb-1">
@@ -233,7 +233,7 @@ export default function DonantesPage() {
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Nombre o DNI/RUC..."
+                placeholder="Nombre del donante..."
                 className="px-3 py-1.5 bg-[#111] border border-[#1f1f1f] rounded-md text-sm focus:outline-none focus:border-[#444] placeholder-[#444] w-56"
               />
               <button type="submit" className="px-3 py-1.5 bg-[#1f1f1f] hover:bg-[#2a2a2a] rounded-md text-sm transition-colors">
@@ -253,7 +253,6 @@ export default function DonantesPage() {
                 <thead>
                   <tr className="border-b border-[#1f1f1f] text-[#888]">
                     <th className="text-left px-4 py-3 font-medium">Nombre</th>
-                    <th className="text-left px-4 py-3 font-medium">DNI / RUC</th>
                     <th className="text-left px-4 py-3 font-medium">Tipo</th>
                     <th className="text-right px-4 py-3 font-medium">Partidos</th>
                     <th className="text-right px-4 py-3 font-medium">Donaciones</th>
@@ -262,20 +261,15 @@ export default function DonantesPage() {
                 </thead>
                 <tbody>
                   {loading ? (
-                    <tr><td colSpan={6} className="px-4 py-12 text-center text-[#888] font-mono text-sm">cargando...</td></tr>
+                    <tr><td colSpan={5} className="px-4 py-12 text-center text-[#888] font-mono text-sm">cargando...</td></tr>
                   ) : rows.length === 0 ? (
-                    <tr><td colSpan={6} className="px-4 py-12 text-center text-[#888] font-mono text-sm">sin resultados</td></tr>
+                    <tr><td colSpan={5} className="px-4 py-12 text-center text-[#888] font-mono text-sm">sin resultados</td></tr>
                   ) : (
                     rows.map((row) => (
-                      <tr key={row.donor_dni_ruc} className="border-b border-[#1f1f1f] last:border-0 hover:bg-[#0d0d0d] transition-colors">
+                      <tr key={row.donor_slug} className="border-b border-[#1f1f1f] last:border-0 hover:bg-[#0d0d0d] transition-colors">
                         <td className="px-4 py-3">
-                          <Link href={`/donante/${encodeURIComponent(row.donor_dni_ruc)}`} className="hover:text-[#c084fc] transition-colors">
+                          <Link href={`/donante/${encodeURIComponent(row.donor_slug)}`} className="hover:text-[#c084fc] transition-colors">
                             {row.donor_name ?? "—"}
-                          </Link>
-                        </td>
-                        <td className="px-4 py-3 font-mono text-xs text-[#888]">
-                          <Link href={`/donante/${encodeURIComponent(row.donor_dni_ruc)}`} className="hover:text-[#c084fc] transition-colors">
-                            {row.donor_dni_ruc}
                           </Link>
                         </td>
                         <td className="px-4 py-3 text-[#888] text-xs">{row.donor_type ?? "—"}</td>
