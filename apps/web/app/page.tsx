@@ -22,7 +22,7 @@ export default async function HomePage() {
   return (
     <main className="min-h-screen">
       <div className="max-w-7xl mx-auto px-6 pt-4 flex items-center gap-4 text-xs text-[#888]">
-        <a href="https://github.com/crafter-station/peru-financia" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">GitHub</a>
+        <a href="https://github.com/crafter-research/peru-financia" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">GitHub</a>
         <span className="text-[#333]">|</span>
         <a href="https://www.onpe.gob.pe" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">Datos: ONPE</a>
       </div>
@@ -37,31 +37,6 @@ export default async function HomePage() {
         )}
       </div>
 
-      <footer className="border-t border-[#1f1f1f] px-6 py-6 mt-16">
-        <div className="max-w-7xl mx-auto flex items-center justify-between text-xs text-[#888]">
-          <span>
-            Datos: ONPE 1995–2026. Proyecto open-source bajo{" "}
-            <a
-              href="https://www.gnu.org/licenses/agpl-3.0.html"
-              className="text-[#c084fc] hover:underline"
-            >
-              AGPL-3.0
-            </a>
-            .
-          </span>
-          <span>
-            por{" "}
-            <a
-              href="https://crafterstation.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-foreground transition-colors"
-            >
-              Crafter Station
-            </a>
-          </span>
-        </div>
-      </footer>
     </main>
   );
 }

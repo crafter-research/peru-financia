@@ -17,13 +17,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://peru-financia.crafter.ing"),
   title: "peru-financia — Financiamiento Político Peruano",
   description:
     "Mapa open-source de flujos de financiamiento político en Perú. Datos de ONPE 1995–2026.",
   openGraph: {
     title: "peru-financia",
     description: "¿Quién financia la política peruana?",
+    url: "https://peru-financia.crafter.ing",
     siteName: "peru-financia",
+    locale: "es_PE",
+    type: "website",
     images: [{ url: "/og.png", width: 1200, height: 630 }],
   },
   twitter: {
