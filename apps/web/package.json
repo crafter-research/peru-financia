@@ -10,6 +10,7 @@
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",
     "@tailwindcss/postcss": "^4.2.1",
+    "@vercel/analytics": "^2.0.1",
     "ai": "^6.0.111",
     "babel-plugin-react-compiler": "^1.0.0",
     "d3-sankey": "^0.12.3",

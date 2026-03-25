@@ -17,6 +17,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "latest",
+    "@vercel/analytics": "^2.0.1",
+    "sharp": "^0.34.5",
     "xlsx": "^0.18.5"
   }
 }

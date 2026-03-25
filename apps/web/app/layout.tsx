@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import { Suspense } from "react";
+import { Analytics } from "@vercel/analytics/next";
 import GlobalSearch from "@/components/global-search";
 import "./globals.css";
 
@@ -23,6 +24,16 @@ export const metadata: Metadata = {
     title: "peru-financia",
     description: "¿Quién financia la política peruana?",
     siteName: "peru-financia",
+    images: [{ url: "/og.png", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "peru-financia",
+    description: "¿Quién financia la política peruana?",
+    images: ["/og-twitter.png"],
+  },
+  icons: {
+    icon: [{ url: "/favicon.ico" }, { url: "/favicon.svg", type: "image/svg+xml" }],
   },
 };
 
@@ -50,6 +61,7 @@ export default function RootLayout({
           </div>
         </div>
         {children}
+        <Analytics />
         <footer className="border-t border-[#1f1f1f] px-6 py-6 mt-12">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-[#888]">
             <div className="space-y-1">
