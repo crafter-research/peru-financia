@@ -44,7 +44,7 @@ export default async function DonantePage({ params }: Props) {
         </div>
       </header>
 
-      <div className="max-w-5xl mx-auto px-6 py-8 space-y-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-8">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
             <div className="flex items-center gap-3 flex-wrap">
@@ -86,15 +86,15 @@ export default async function DonantePage({ params }: Props) {
 
         <div>
           <h2 className="text-sm font-medium text-[#888] mb-3">Donaciones por partido</h2>
-          <div className="border border-[#1f1f1f] rounded-lg overflow-hidden">
-            <table className="w-full text-sm">
+          <div className="border border-[#1f1f1f] rounded-lg overflow-x-auto">
+            <table className="w-full text-sm min-w-[400px]">
               <thead>
                 <tr className="border-b border-[#1f1f1f] bg-[#111]">
-                  <th className="text-left px-4 py-3 text-[#888] font-normal">Partido</th>
-                  <th className="text-left px-4 py-3 text-[#888] font-normal">Año</th>
-                  <th className="text-left px-4 py-3 text-[#888] font-normal">Proceso</th>
-                  <th className="text-right px-4 py-3 text-[#888] font-normal">Monto</th>
-                  <th className="text-right px-4 py-3 text-[#888] font-normal">N°</th>
+                  <th className="text-left px-3 sm:px-4 py-3 text-[#888] font-normal">Partido</th>
+                  <th className="text-left px-3 sm:px-4 py-3 text-[#888] font-normal">Año</th>
+                  <th className="text-left px-3 sm:px-4 py-3 text-[#888] font-normal hidden sm:table-cell">Proceso</th>
+                  <th className="text-right px-3 sm:px-4 py-3 text-[#888] font-normal">Monto</th>
+                  <th className="text-right px-3 sm:px-4 py-3 text-[#888] font-normal hidden sm:table-cell">N°</th>
                 </tr>
               </thead>
               <tbody>
@@ -111,14 +111,14 @@ export default async function DonantePage({ params }: Props) {
                         {d.party_name}
                       </Link>
                     </td>
-                    <td className="px-4 py-3 font-mono text-[#888]">{d.year}</td>
-                    <td className="px-4 py-3 font-mono text-xs text-[#888]">{d.electoral_process ?? "—"}</td>
-                    <td className="px-4 py-3 text-right font-mono">
+                    <td className="px-3 sm:px-4 py-3 font-mono text-[#888]">{d.year}</td>
+                    <td className="px-3 sm:px-4 py-3 font-mono text-xs text-[#888] hidden sm:table-cell">{d.electoral_process ?? "—"}</td>
+                    <td className="px-3 sm:px-4 py-3 text-right font-mono whitespace-nowrap">
                       <span className={d.total >= 100_000 ? "text-[#c084fc]" : d.total >= 10_000 ? "text-[#60a5fa]" : ""}>
                         {formatSoles(d.total)}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-right text-[#888] font-mono">{d.count}</td>
+                    <td className="px-3 sm:px-4 py-3 text-right text-[#888] font-mono hidden sm:table-cell">{d.count}</td>
                   </tr>
                 ))}
                 {donations.length === 0 && (

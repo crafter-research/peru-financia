@@ -81,13 +81,13 @@ export default function DonantesPage() {
 
   return (
     <main className="min-h-screen">
-      <div className="max-w-7xl mx-auto px-6 pt-4 flex items-center gap-4 text-xs text-[#888]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex items-center gap-4 text-xs text-[#888]">
         <Link href="/" className="hover:text-foreground transition-colors">Inicio</Link>
         <span className="text-[#333]">|</span>
         <span>Donantes</span>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
         <div>
           <h2 className="text-2xl font-semibold tracking-tight">Donantes</h2>
           <p className="text-[#888] mt-1 text-sm">
@@ -251,14 +251,14 @@ export default function DonantesPage() {
 
           <div className="border border-[#1f1f1f] rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm min-w-[500px]">
                 <thead>
                   <tr className="border-b border-[#1f1f1f] text-[#888]">
-                    <th className="text-left px-4 py-3 font-medium">Nombre</th>
-                    <th className="text-left px-4 py-3 font-medium">Tipo</th>
-                    <th className="text-right px-4 py-3 font-medium">Partidos</th>
-                    <th className="text-right px-4 py-3 font-medium">Donaciones</th>
-                    <th className="text-right px-4 py-3 font-medium">Total</th>
+                    <th className="text-left px-3 sm:px-4 py-3 font-medium whitespace-nowrap">Nombre</th>
+                    <th className="text-left px-3 sm:px-4 py-3 font-medium whitespace-nowrap">Tipo</th>
+                    <th className="text-right px-3 sm:px-4 py-3 font-medium whitespace-nowrap">Partidos</th>
+                    <th className="text-right px-3 sm:px-4 py-3 font-medium whitespace-nowrap hidden sm:table-cell">Donaciones</th>
+                    <th className="text-right px-3 sm:px-4 py-3 font-medium whitespace-nowrap">Total</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -281,8 +281,8 @@ export default function DonantesPage() {
                             <span className="ml-1.5 px-1.5 py-0.5 bg-[#f87171]/10 text-[#f87171] rounded text-[10px]">multi</span>
                           )}
                         </td>
-                        <td className="px-4 py-3 text-right font-mono text-xs text-[#888]">{row.donations_count}</td>
-                        <td className="px-4 py-3 text-right font-mono text-sm">{formatSoles(row.total)}</td>
+                        <td className="px-3 sm:px-4 py-3 text-right font-mono text-xs text-[#888] hidden sm:table-cell">{row.donations_count}</td>
+                        <td className="px-3 sm:px-4 py-3 text-right font-mono text-sm whitespace-nowrap">{formatSoles(row.total)}</td>
                       </tr>
                     ))
                   )}

@@ -64,7 +64,7 @@ export default function GlobalSearch() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => results.length > 0 && setOpen(true)}
-          className="w-52 sm:w-72 px-3 py-1.5 bg-[#111] border border-[#1f1f1f] rounded-md text-sm placeholder:text-[#444] focus:outline-none focus:border-[#333] focus:w-80 transition-all"
+          className="w-32 sm:w-52 md:w-72 px-3 py-1.5 bg-[#111] border border-[#1f1f1f] rounded-md text-sm placeholder:text-[#444] focus:outline-none focus:border-[#333] sm:focus:w-80 transition-all"
         />
         {loading && (
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#444] text-xs animate-pulse">
@@ -74,7 +74,7 @@ export default function GlobalSearch() {
       </div>
 
       {open && results.length > 0 && (
-        <div className="absolute top-full mt-1 right-0 w-80 bg-[#111] border border-[#1f1f1f] rounded-lg shadow-xl z-50 overflow-hidden">
+        <div className="absolute top-full mt-1 right-0 w-[calc(100vw-2rem)] sm:w-80 bg-[#111] border border-[#1f1f1f] rounded-lg shadow-xl z-50 overflow-hidden">
           {results.map((r) => (
             <button
               key={`${r.type}-${r.key}`}

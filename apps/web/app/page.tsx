@@ -21,13 +21,13 @@ export default async function HomePage() {
 
   return (
     <main className="min-h-screen">
-      <div className="max-w-7xl mx-auto px-6 pt-4 flex items-center gap-4 text-xs text-[#888]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex items-center gap-4 text-xs text-[#888]">
         <a href="https://github.com/crafter-research/peru-financia" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">GitHub</a>
         <span className="text-[#333]">|</span>
         <a href="https://www.onpe.gob.pe" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">Datos: ONPE</a>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         {processes.length === 0 ? (
           <EmptyState />
         ) : (

@@ -94,20 +94,20 @@ export default function DonorTable({ year, partyFilter, electoralProcess }: Prop
         <div className="text-[#888] font-mono text-sm py-8 text-center animate-pulse">cargando...</div>
       ) : (
         <div className="overflow-x-auto rounded-lg border border-[#1f1f1f]">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm min-w-[480px]">
             <thead>
               <tr className="border-b border-[#1f1f1f] bg-[#111]">
-                <th className="text-left px-4 py-3 text-[#888] font-normal">Donante</th>
-                <th className="text-left px-4 py-3 text-[#888] font-normal">Partido</th>
-                <th className="text-left px-4 py-3 text-[#888] font-normal">Tipo</th>
-                <th className="text-right px-4 py-3 text-[#888] font-normal">Monto</th>
-                <th className="text-left px-4 py-3 text-[#888] font-normal">Fecha</th>
+                <th className="text-left px-3 sm:px-4 py-3 text-[#888] font-normal whitespace-nowrap">Donante</th>
+                <th className="text-left px-3 sm:px-4 py-3 text-[#888] font-normal whitespace-nowrap">Partido</th>
+                <th className="text-left px-3 sm:px-4 py-3 text-[#888] font-normal whitespace-nowrap hidden sm:table-cell">Tipo</th>
+                <th className="text-right px-3 sm:px-4 py-3 text-[#888] font-normal whitespace-nowrap">Monto</th>
+                <th className="text-left px-3 sm:px-4 py-3 text-[#888] font-normal whitespace-nowrap hidden sm:table-cell">Fecha</th>
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="text-center py-8 text-[#888] font-mono text-xs">sin registros</td>
+                  <td colSpan={5} className="text-center py-8 text-[#888] font-mono text-xs">sin registros</td>
                 </tr>
               ) : (
                 filtered.map((r) => (
@@ -132,7 +132,7 @@ export default function DonorTable({ year, partyFilter, electoralProcess }: Prop
                         {r.party_name}
                       </Link>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 sm:px-4 py-3 hidden sm:table-cell">
                       {r.financing_type ? (
                         <span
                           className="px-2 py-0.5 rounded text-xs border"
@@ -148,7 +148,7 @@ export default function DonorTable({ year, partyFilter, electoralProcess }: Prop
                         <span className="text-[#444]">—</span>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-right font-mono">
+                    <td className="px-3 sm:px-4 py-3 text-right font-mono whitespace-nowrap">
                       <span
                         className={
                           r.amount_soles >= 100_000
@@ -161,7 +161,7 @@ export default function DonorTable({ year, partyFilter, electoralProcess }: Prop
                         {formatSoles(r.amount_soles)}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-[#888] text-xs font-mono">{r.date ?? "—"}</td>
+                    <td className="px-3 sm:px-4 py-3 text-[#888] text-xs font-mono hidden sm:table-cell">{r.date ?? "—"}</td>
                   </tr>
                 ))
               )}

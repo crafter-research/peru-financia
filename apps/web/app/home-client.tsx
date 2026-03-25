@@ -78,7 +78,7 @@ export default function HomeClient({ processes, defaultProcess, topParties }: Pr
         </p>
       </div>
 
-      <div className="flex items-center gap-3 flex-wrap">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
         <div className="flex items-center gap-2">
           <label htmlFor="process-select" className="text-sm text-[#888]">Proceso</label>
           <select
@@ -98,7 +98,7 @@ export default function HomeClient({ processes, defaultProcess, topParties }: Pr
           total: <span className="text-foreground">{formatSoles(totalAmount)}</span>
         </div>
 
-        <div className="ml-auto flex gap-1 bg-[#111] border border-[#1f1f1f] rounded-md p-1">
+        <div className="sm:ml-auto flex gap-1 bg-[#111] border border-[#1f1f1f] rounded-md p-1">
           {(["sankey", "table", "ranking"] as const).map((tab) => (
             <button
               key={tab}
@@ -114,7 +114,7 @@ export default function HomeClient({ processes, defaultProcess, topParties }: Pr
         </div>
       </div>
 
-      <div className="border border-[#1f1f1f] rounded-xl p-6 bg-[#0d0d0d]">
+      <div className="border border-[#1f1f1f] rounded-xl p-3 sm:p-6 bg-[#0d0d0d] overflow-hidden">
         {activeTab === "sankey" && (
           <SankeyChart
             year={yearFromProcess ? Number(yearFromProcess) : 0}
@@ -136,7 +136,7 @@ export default function HomeClient({ processes, defaultProcess, topParties }: Pr
         <h3 className="text-sm font-medium text-[#888] mb-3">
           Top partidos por financiamiento{process ? ` — ${process}` : ""}
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
           {currentTopParties.slice(0, 9).map((party) => {
             const slug = party.party_name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
             const pct = totalAmount > 0 ? (party.total / totalAmount) * 100 : 0;

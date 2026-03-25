@@ -33,13 +33,13 @@ export default async function PartidoPage({ params, searchParams }: Props) {
 
   return (
     <main className="min-h-screen">
-      <div className="max-w-5xl mx-auto px-6 py-4 flex items-center gap-2 text-sm text-[#888]">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center gap-2 text-sm text-[#888]">
         <Link href="/" className="hover:text-foreground transition-colors">← peru-financia</Link>
         <span className="text-[#333]">/</span>
         <span>partido</span>
       </div>
 
-      <div className="max-w-5xl mx-auto px-6 py-4 space-y-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 space-y-8">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">{displayName}</h1>
           <p className="text-[#888] text-sm mt-1">Registro de financiamiento — ONPE</p>

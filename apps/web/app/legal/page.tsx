@@ -19,7 +19,7 @@ export default function LegalPage() {
         </div>
       </header>
 
-      <div className="max-w-3xl mx-auto px-6 py-12 space-y-10">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 space-y-10">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight mb-2">Aviso Legal</h1>
           <p className="text-[#888] text-sm">Última actualización: marzo 2026</p>
@@ -115,8 +115,8 @@ export default function LegalPage() {
 
         <section className="space-y-4">
           <h2 className="text-lg font-medium">8. Marco legal aplicable</h2>
-          <div className="border border-[#1f1f1f] rounded-lg overflow-hidden">
-            <table className="w-full text-sm">
+          <div className="border border-[#1f1f1f] rounded-lg overflow-x-auto">
+            <table className="w-full text-sm min-w-[480px]">
               <thead>
                 <tr className="border-b border-[#1f1f1f] bg-[#111]">
                   <th className="text-left px-4 py-3 text-[#888] font-normal">Ley</th>
