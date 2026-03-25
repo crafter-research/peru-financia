@@ -2,14 +2,14 @@
 
 Herramienta open-source para visualizar y explorar el financiamiento político en el Perú. Consulta quién dona, cuánto, a qué partido y en qué proceso electoral — de forma clara y accesible para cualquier ciudadano.
 
-**Datos**: ONPE Claridad 2018–2025 (12,956 aportantes)
+**Datos**: ONPE 1995–2026 (13,250+ registros)
 
 ## Qué puedes hacer
 
 - Ver el flujo de dinero hacia los partidos con diagramas Sankey por proceso electoral
 - Explorar el ranking de partidos por monto recibido
 - Consultar el perfil de cualquier donante: total donado, a cuántos partidos, historial completo
-- Buscar partidos y donantes por nombre o RUC/DNI
+- Buscar partidos y donantes por nombre
 - Ver tendencias históricas de financiamiento por partido
 - Descargar los datos en CSV
 
@@ -19,7 +19,8 @@ Herramienta open-source para visualizar y explorar el financiamiento político e
 |------|-------------|
 | `/` | Sankey + tabla + ranking por proceso electoral |
 | `/donante` | Índice de donantes con métricas y distribución |
-| `/donante/[ruc]` | Perfil individual de un donante |
+| `/donante/[slug]` | Perfil individual de un donante |
+| `/legal` | Aviso legal y política de datos |
 | `/partido/[slug]` | Perfil de partido con tendencia histórica |
 
 ## Stack
@@ -56,4 +57,4 @@ AGPL-3.0 — cualquier institución que use este código debe open-sourcear sus 
 
 ---
 
-Proyecto de [Crafter Station](https://crafterstation.com). Civic tech para Perú.
+Proyecto de [Crafter Research](https://research.crafter.ing) / [Crafter Station](https://crafterstation.com). Civic tech para Perú.
