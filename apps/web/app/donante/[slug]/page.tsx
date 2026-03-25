@@ -105,7 +105,7 @@ export default async function DonantePage({ params }: Props) {
                   >
                     <td className="px-4 py-3">
                       <Link
-                        href={`/partido/${d.party_name.toLowerCase().replace(/\s+/g, "-")}`}
+                        href={`/partido/${d.party_name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`}
                         className="hover:text-[#c084fc] transition-colors"
                       >
                         {d.party_name}

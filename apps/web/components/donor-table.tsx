@@ -126,7 +126,7 @@ export default function DonorTable({ year, partyFilter, electoralProcess }: Prop
                     </td>
                     <td className="px-4 py-3 max-w-40 truncate">
                       <Link
-                        href={`/partido/${r.party_name.toLowerCase().replace(/\s+/g, "-")}`}
+                        href={`/partido/${r.party_name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`}
                         className="hover:text-[#c084fc] transition-colors"
                       >
                         {r.party_name}

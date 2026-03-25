@@ -138,7 +138,7 @@ export default function HomeClient({ processes, defaultProcess, topParties }: Pr
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {currentTopParties.slice(0, 9).map((party) => {
-            const slug = party.party_name.toLowerCase().replace(/\s+/g, "-");
+            const slug = party.party_name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
             const pct = totalAmount > 0 ? (party.total / totalAmount) * 100 : 0;
             return (
               <Link

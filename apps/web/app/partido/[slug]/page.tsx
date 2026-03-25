@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getAvailableYears, getPartyTrend } from "@/lib/db";
+import { getAvailableYears, resolvePartyName } from "@/lib/db";
 import DonorTable from "@/components/donor-table";
 import PartidoClient from "./partido-client";
 
@@ -18,10 +18,7 @@ export default async function PartidoPage({ params, searchParams }: Props) {
 
   try {
     years = await getAvailableYears();
-    const trend = await getPartyTrend(slug.replace(/-/g, " "));
-    if (trend.length > 0) {
-      partyName = slug.replace(/-/g, " ").toUpperCase();
-    }
+    partyName = await resolvePartyName(slug);
   } catch {
     // DB not connected
   }

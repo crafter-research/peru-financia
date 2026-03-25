@@ -366,6 +366,19 @@ export async function getPartyTrend(partyName: string): Promise<PartyTrend[]> {
   ` as unknown as Promise<PartyTrend[]>;
 }
 
+export async function resolvePartyName(slug: string): Promise<string | null> {
+  const searchTerm = "%" + slug.replace(/-/g, "%") + "%";
+  const rows = await sql`
+    SELECT party_name, SUM(amount_soles)::float as total
+    FROM financing_records
+    WHERE party_name ILIKE ${searchTerm}
+    GROUP BY party_name
+    ORDER BY total DESC
+    LIMIT 1
+  `;
+  return rows.length > 0 ? (rows[0].party_name as string) : null;
+}
+
 export async function getDonorProfile(slug: string): Promise<DonorProfile | null> {
   const rows = await sql`
     SELECT donor_name, donor_slug, donor_type,
