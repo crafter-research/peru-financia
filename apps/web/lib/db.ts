@@ -394,6 +394,7 @@ export type DonorStats = {
   total_donors: number;
   persona_natural: number;
   persona_juridica: number;
+  autofinanciamiento: number;
   multi_party_donors: number;
   total_amount: number;
   top_donors: { donor_name: string | null; donor_slug: string; total: number; parties_count: number }[];
@@ -406,7 +407,8 @@ export async function getDonorStats(): Promise<DonorStats> {
       SELECT
         COUNT(DISTINCT donor_slug)::int as total_donors,
         COUNT(DISTINCT CASE WHEN donor_type = 'persona_natural' THEN donor_slug END)::int as persona_natural,
-        COUNT(DISTINCT CASE WHEN donor_type != 'persona_natural' AND donor_type IS NOT NULL THEN donor_slug END)::int as persona_juridica,
+        COUNT(DISTINCT CASE WHEN donor_type = 'persona_juridica' THEN donor_slug END)::int as persona_juridica,
+        COUNT(DISTINCT CASE WHEN donor_type = 'autofinanciamiento' THEN donor_slug END)::int as autofinanciamiento,
         COUNT(DISTINCT CASE WHEN parties_count >= 2 THEN donor_slug END)::int as multi_party_donors,
         SUM(total_amount)::float as total_amount
       FROM (
@@ -457,6 +459,7 @@ export async function getDonorStats(): Promise<DonorStats> {
     total_donors: Number(s.total_donors),
     persona_natural: Number(s.persona_natural),
     persona_juridica: Number(s.persona_juridica),
+    autofinanciamiento: Number(s.autofinanciamiento),
     multi_party_donors: Number(s.multi_party_donors),
     total_amount: Number(s.total_amount),
     top_donors: topRows as unknown as DonorStats["top_donors"],

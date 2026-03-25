@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getAvailableYears, getFinancingRecords } from "@/lib/db";
+import { getAvailableYears, getPartyTrend } from "@/lib/db";
 import DonorTable from "@/components/donor-table";
 import PartidoClient from "./partido-client";
 
@@ -18,20 +18,15 @@ export default async function PartidoPage({ params, searchParams }: Props) {
 
   try {
     years = await getAvailableYears();
+    const trend = await getPartyTrend(slug.replace(/-/g, " "));
+    if (trend.length > 0) {
+      partyName = slug.replace(/-/g, " ").toUpperCase();
+    }
   } catch {
     // DB not connected
   }
 
   const year = yearParam ? Number(yearParam) : (years[0] ?? 2020);
-
-  try {
-    const records = await getFinancingRecords(year, slug.replace(/-/g, " "));
-    if (records.length > 0) {
-      partyName = records[0].party_name;
-    }
-  } catch {
-    // DB not connected
-  }
 
   if (!partyName && years.length > 0) {
     notFound();

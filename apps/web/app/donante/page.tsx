@@ -22,6 +22,7 @@ type DonorStats = {
   total_donors: number;
   persona_natural: number;
   persona_juridica: number;
+  autofinanciamiento: number;
   multi_party_donors: number;
   total_amount: number;
   top_donors: { donor_name: string | null; donor_slug: string; total: number; parties_count: number }[];
@@ -191,9 +192,12 @@ export default function DonantesPage() {
               {stats ? (
                 <div className="flex items-center gap-6">
                   <TinyDonut
-                    natural={stats.persona_natural}
-                    juridica={stats.persona_juridica}
-                    total={stats.total_donors}
+                    segments={[
+                      { value: stats.persona_natural, color: "#c084fc" },
+                      { value: stats.persona_juridica, color: "#60a5fa" },
+                      { value: stats.autofinanciamiento, color: "#34d399" },
+                      { value: Math.max(0, stats.total_donors - stats.persona_natural - stats.persona_juridica - stats.autofinanciamiento), color: "#555" },
+                    ]}
                   />
                   <div className="space-y-2 flex-1">
                     <div className="flex items-center gap-2">
@@ -207,11 +211,9 @@ export default function DonantesPage() {
                       <span className="font-mono text-xs">{stats.persona_juridica.toLocaleString()}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="w-2.5 h-2.5 rounded-full bg-[#555] shrink-0" />
-                      <span className="text-xs text-[#888] flex-1">Desconocido</span>
-                      <span className="font-mono text-xs">
-                        {(stats.total_donors - stats.persona_natural - stats.persona_juridica).toLocaleString()}
-                      </span>
+                      <div className="w-2.5 h-2.5 rounded-full bg-[#34d399] shrink-0" />
+                      <span className="text-xs text-[#888] flex-1">Autofinanciamiento</span>
+                      <span className="font-mono text-xs">{stats.autofinanciamiento.toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
@@ -312,41 +314,36 @@ export default function DonantesPage() {
   );
 }
 
-function TinyDonut({ natural, juridica, total }: { natural: number; juridica: number; total: number }) {
+function TinyDonut({ segments }: { segments: { value: number; color: string }[] }) {
   const r = 28;
   const cx = 36;
   const cy = 36;
   const circ = 2 * Math.PI * r;
+  const total = segments.reduce((s, seg) => s + seg.value, 0);
+  if (total === 0) return <svg width={72} height={72} className="shrink-0"><circle cx={cx} cy={cy} r={r} fill="none" stroke="#1a1a1a" strokeWidth={10} /></svg>;
 
-  const pNatural = total > 0 ? natural / total : 0;
-  const pJuridica = total > 0 ? juridica / total : 0;
-  const pUnknown = 1 - pNatural - pJuridica;
-
-  const seg1 = circ * pNatural;
-  const seg2 = circ * pJuridica;
-  const seg3 = circ * pUnknown;
+  let offset = circ * 0.25;
 
   return (
     <svg width={72} height={72} className="shrink-0">
       <circle cx={cx} cy={cy} r={r} fill="none" stroke="#1a1a1a" strokeWidth={10} />
-      {/* natural */}
-      <circle cx={cx} cy={cy} r={r} fill="none" stroke="#c084fc" strokeWidth={10}
-        strokeDasharray={`${seg1} ${circ - seg1}`}
-        strokeDashoffset={circ * 0.25}
-        strokeLinecap="butt"
-      />
-      {/* juridica */}
-      <circle cx={cx} cy={cy} r={r} fill="none" stroke="#60a5fa" strokeWidth={10}
-        strokeDasharray={`${seg2} ${circ - seg2}`}
-        strokeDashoffset={circ * 0.25 - seg1}
-        strokeLinecap="butt"
-      />
-      {/* unknown */}
-      <circle cx={cx} cy={cy} r={r} fill="none" stroke="#555" strokeWidth={10}
-        strokeDasharray={`${seg3} ${circ - seg3}`}
-        strokeDashoffset={circ * 0.25 - seg1 - seg2}
-        strokeLinecap="butt"
-      />
+      {segments.filter(s => s.value > 0).map((seg, i) => {
+        const len = (seg.value / total) * circ;
+        const el = (
+          <circle
+            key={i}
+            cx={cx} cy={cy} r={r}
+            fill="none"
+            stroke={seg.color}
+            strokeWidth={10}
+            strokeDasharray={`${len} ${circ - len}`}
+            strokeDashoffset={offset}
+            strokeLinecap="butt"
+          />
+        );
+        offset -= len;
+        return el;
+      })}
     </svg>
   );
 }
