@@ -45,7 +45,19 @@ export default function TrendChart({ partyName }: Props) {
     };
   });
 
-  if (data.length < 2) return null;
+  if (data.length < 2) {
+    const d = data[0];
+    if (!d) return null;
+    return (
+      <div className="border border-[#1f1f1f] rounded-xl p-6 bg-[#0d0d0d]">
+        <p className="text-xs text-[#888] mb-3">Financiamiento registrado</p>
+        <div className="flex items-baseline gap-3">
+          <span className="font-mono text-2xl text-[#c084fc]">{formatSoles(d.total)}</span>
+          <span className="text-sm text-[#888]">en {d.year}</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="border border-[#1f1f1f] rounded-xl p-6 bg-[#0d0d0d]">
